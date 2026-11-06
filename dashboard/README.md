@@ -46,6 +46,14 @@ D=/homeassistant; [ -d "$D" ] || D=/config; mkdir -p "$D/www" && curl -fL -o "$D
 
 Run the same command again later to update.
 
+**Home Assistant in Docker.** Docker usually creates the `config` folder owned by root, so a file
+manager can't add files to it. Let the container fetch the file instead (the container name is from
+`container_name:` in your `docker-compose.yml`):
+
+```bash
+sudo docker exec homeassistant python3 -c "import os,urllib.request; os.makedirs('/config/www', exist_ok=True); urllib.request.urlretrieve('https://raw.githubusercontent.com/HMueller6/android-home-assistant/ccr-e44b8c0e-a6gwjl/dashboard/dist/habitat.html', '/config/www/habitat.html'); print('Done')" && sudo docker restart homeassistant
+```
+
 **Upload the file.** In the *File editor* add-on, open the folder browser, create a folder `www` if
 there is none, open it, and use the upload button to add `habitat.html`.
 
