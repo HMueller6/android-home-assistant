@@ -1,0 +1,14 @@
+{
+  "name": "Habitat for Home Assistant",
+  "short_name": "Habitat",
+  "description": "A tiled, futuristic dashboard for Home Assistant.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#04070d",
+  "theme_color": "#04070d",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

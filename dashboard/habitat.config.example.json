@@ -1,0 +1,10 @@
+{
+  "title": "Home",
+  "accent": "#38d9f5",
+  "powerSensor": "sensor.house_power",
+  "weather": "weather.home",
+  "historyHours": 24,
+  "hideSections": [],
+  "exclude": ["sensor.*_signal_strength", "sensor.*_linkquality"],
+  "include": []
+}

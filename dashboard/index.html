@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Habitat</title>
+  <meta name="description" content="A tiled, futuristic dashboard for Home Assistant.">
+  <meta name="theme-color" content="#04070d">
+  <meta name="color-scheme" content="dark">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+  <link rel="stylesheet" href="css/habitat.css?v=1.0.0">
+</head>
+<body>
+  <a class="skip" href="#sections">Skip to dashboard</a>
+
+  <header class="hud" id="hud">
+    <div class="hud__bar">
+      <div class="hud__brand">
+        <svg class="hud__mark" viewBox="0 0 32 32" aria-hidden="true">
+          <circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="54.5 27.2" transform="rotate(150 16 16)"/>
+          <path d="M10 17.2 16 12l6 5.2M12 15.6V22h8v-6.4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div class="hud__titles">
+          <div class="hud__site" id="hud-site">Home</div>
+          <div class="hud__date" id="hud-date"></div>
+        </div>
+      </div>
+      <div class="hud__clock" aria-hidden="true"><span id="hud-clock">--:--</span><span class="hud__sec" id="hud-seconds">--</span></div>
+      <div class="hud__status">
+        <span class="pill pill--warning" id="hud-link" role="status"><i class="pill__dot"></i><span>Connecting</span></span>
+        <button class="pill pill--good pill--button" id="hud-attention" type="button" data-action="attention" aria-haspopup="dialog"><span>All clear</span></button>
+        <div class="hud__tools">
+          <button class="icon-btn" id="hud-wake" type="button" data-action="wake" data-icon="eye" aria-pressed="false" aria-label="Keep the screen on" title="Keep the screen on"></button>
+          <button class="icon-btn" type="button" data-action="fullscreen" data-icon="fullscreen" aria-label="Full screen" title="Full screen"></button>
+          <button class="icon-btn" type="button" data-action="settings" data-icon="sliders" aria-label="Display settings" title="Display settings" aria-haspopup="dialog"></button>
+        </div>
+      </div>
+    </div>
+    <nav class="tabs" id="area-tabs" aria-label="Rooms" hidden></nav>
+  </header>
+
+  <main class="shell" id="main">
+    <div id="sections" tabindex="-1"></div>
+    <p class="empty" id="empty" hidden>Nothing to show in this room. Pick another room, or check the include and exclude lists in habitat.config.json.</p>
+  </main>
+
+  <section class="connect" id="connect" aria-labelledby="connect-title" hidden>
+    <div class="connect__card">
+      <svg class="connect__mark" viewBox="0 0 32 32" aria-hidden="true">
+        <circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="54.5 27.2" transform="rotate(150 16 16)"/>
+        <path d="M10 17.2 16 12l6 5.2M12 15.6V22h8v-6.4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <h1 id="connect-title">Connect to Home Assistant</h1>
+      <p class="connect__lede">Habitat puts your lights, sensors, meters and cameras from Home Assistant on one tiled screen.</p>
+      <form id="connect-form" novalidate>
+        <label for="connect-url">Home Assistant address</label>
+        <input class="input" id="connect-url" name="url" type="url" inputmode="url" autocomplete="url" placeholder="http://homeassistant.local:8123" required>
+        <label for="connect-token">Long-lived access token <span>(optional)</span></label>
+        <input class="input" id="connect-token" name="token" type="password" autocomplete="off" spellcheck="false" placeholder="Leave empty to sign in with your account">
+        <p class="connect__hint">Create a token in Home Assistant under your profile, Security, Long-lived access tokens. It is stored only in this browser.</p>
+        <p class="connect__error" id="connect-error" role="alert" hidden></p>
+        <p class="connect__retry" id="connect-retrying" hidden>Habitat keeps retrying on its own. You can also change the address above.</p>
+        <div class="connect__actions">
+          <button class="btn btn--primary" id="connect-submit" type="submit">Connect</button>
+          <a class="btn" href="?demo">Try the demo</a>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <dialog class="sheet detail" id="detail" aria-labelledby="detail-title">
+    <div class="sheet__panel" id="detail-panel">
+      <header class="sheet__head">
+        <span class="detail__icon" id="detail-icon"></span>
+        <div class="sheet__titles">
+          <div class="eyebrow" id="detail-eyebrow"></div>
+          <h2 id="detail-title">Details</h2>
+          <code class="detail__id" id="detail-id"></code>
+        </div>
+        <button class="icon-btn" type="button" data-action="close-detail" data-icon="close" aria-label="Close details"></button>
+      </header>
+      <section class="detail__now" id="detail-now" aria-live="polite"></section>
+      <section class="detail__controls" id="detail-controls" aria-label="Controls"></section>
+      <section class="detail__history" aria-label="History">
+        <div class="toolbar">
+          <div class="segmented" id="detail-ranges" role="group" aria-label="Time range"></div>
+          <div class="segmented" id="detail-view" role="group" aria-label="Show as"></div>
+        </div>
+        <dl class="stats" id="detail-stats"></dl>
+        <div class="chart-host" id="detail-chart"></div>
+      </section>
+      <details class="detail__attrs" id="detail-attrs"></details>
+    </div>
+  </dialog>
+
+  <dialog class="sheet sheet--small" id="settings" aria-labelledby="settings-title">
+    <div class="sheet__panel">
+      <header class="sheet__head">
+        <div class="sheet__titles">
+          <div class="eyebrow">This device</div>
+          <h2 id="settings-title">Display settings</h2>
+        </div>
+        <button class="icon-btn" type="button" data-action="close-dialog" data-icon="close" aria-label="Close settings"></button>
+      </header>
+      <fieldset class="field">
+        <legend>Accent colour</legend>
+        <div class="swatches">
+          <label class="swatch" style="--sw: #38d9f5"><input type="radio" name="accent" value="cyan" id="set-accent-cyan"><i></i>Cyan</label>
+          <label class="swatch" style="--sw: #8ab8ff"><input type="radio" name="accent" value="ice" id="set-accent-ice"><i></i>Ice</label>
+          <label class="swatch" style="--sw: #b19cff"><input type="radio" name="accent" value="violet" id="set-accent-violet"><i></i>Violet</label>
+          <label class="swatch" style="--sw: #41e6b0"><input type="radio" name="accent" value="mint" id="set-accent-mint"><i></i>Mint</label>
+          <label class="swatch" style="--sw: #ff7eb6"><input type="radio" name="accent" value="rose" id="set-accent-rose"><i></i>Rose</label>
+        </div>
+      </fieldset>
+      <fieldset class="field">
+        <legend>Tile density</legend>
+        <div class="segmented segmented--inputs">
+          <label><input type="radio" name="density" value="comfortable" id="set-density-comfortable">Comfortable</label>
+          <label><input type="radio" name="density" value="compact" id="set-density-compact">Compact</label>
+        </div>
+      </fieldset>
+      <label class="switch"><input type="checkbox" id="set-unavailable">Show unavailable devices</label>
+      <label class="switch"><input type="checkbox" id="set-awake">Keep the screen on</label>
+      <dl class="kv-grid" id="set-connection"></dl>
+      <div class="btn-row btn-row--wrap">
+        <button class="btn btn--primary" id="set-connect" type="button" data-action="connect-real" hidden>Connect to my Home Assistant</button>
+        <button class="btn btn--danger" id="set-signout" type="button" data-action="sign-out" hidden>Sign out on this device</button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog class="sheet sheet--small" id="attention" aria-labelledby="attention-title">
+    <div class="sheet__panel">
+      <header class="sheet__head">
+        <div class="sheet__titles">
+          <div class="eyebrow">Status</div>
+          <h2 id="attention-title">Needs attention</h2>
+        </div>
+        <button class="icon-btn" type="button" data-action="close-dialog" data-icon="close" aria-label="Close"></button>
+      </header>
+      <ul class="att-list" id="attention-list"></ul>
+    </div>
+  </dialog>
+
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+
+  <script src="js/util.js?v=1.0.0"></script>
+  <script src="js/icons.js?v=1.0.0"></script>
+  <script src="js/ha.js?v=1.0.0"></script>
+  <script src="js/demo.js?v=1.0.0"></script>
+  <script src="js/model.js?v=1.0.0"></script>
+  <script src="js/charts.js?v=1.0.0"></script>
+  <script src="js/tiles.js?v=1.0.0"></script>
+  <script src="js/detail.js?v=1.0.0"></script>
+  <script src="js/app.js?v=1.0.0"></script>
+</body>
+</html>
