@@ -41,7 +41,7 @@ configuration. Pick one of these:
 open it, and paste:
 
 ```bash
-mkdir -p /config/www && wget -O /config/www/habitat.html https://raw.githubusercontent.com/HMueller6/android-home-assistant/ccr-e44b8c0e-a6gwjl/dashboard/dist/habitat.html
+D=/homeassistant; [ -d "$D" ] || D=/config; mkdir -p "$D/www" && curl -fL -o "$D/www/habitat.html" https://raw.githubusercontent.com/HMueller6/android-home-assistant/ccr-e44b8c0e-a6gwjl/dashboard/dist/habitat.html && echo Done
 ```
 
 Run the same command again later to update.
