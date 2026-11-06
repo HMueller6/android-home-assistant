@@ -3,7 +3,7 @@
 #
 # Usage: habitat-kiosk.sh [--window] [URL]
 #   URL       dashboard address; defaults to $HABITAT_URL, then
-#             http://homeassistant.local:8123/local/habitat/index.html
+#             http://homeassistant.local:8123/local/habitat.html
 #   --window  open a normal app window instead of full-screen kiosk mode
 #
 # Environment:
@@ -12,7 +12,7 @@
 #   HABITAT_NO_BLANK  set to 1 to stop an X11 screen from blanking (wall displays)
 set -euo pipefail
 
-readonly DEFAULT_URL="http://homeassistant.local:8123/local/habitat/index.html"
+readonly DEFAULT_URL="http://homeassistant.local:8123/local/habitat.html"
 readonly PROFILE_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/habitat-kiosk"
 readonly CANDIDATES=(chromium chromium-browser google-chrome google-chrome-stable brave-browser microsoft-edge firefox)
 

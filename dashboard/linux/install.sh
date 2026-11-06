@@ -2,7 +2,7 @@
 # Installs a "Habitat" app launcher for the current Linux user (no root needed).
 #
 # Usage: ./install.sh URL [--autostart]
-#   URL          dashboard address, e.g. http://homeassistant.local:8123/local/habitat/index.html
+#   URL          dashboard address, e.g. http://homeassistant.local:8123/local/habitat.html
 #   --autostart  also start Habitat full screen when you log in (wall displays)
 #
 # Installs:

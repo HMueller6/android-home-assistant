@@ -34,22 +34,38 @@ timeline. Every chart has a table view.
 
 ## Install
 
-1. Copy this `dashboard` folder into your Home Assistant configuration as `www/habitat`, so that
-   `index.html` ends up at `/config/www/habitat/index.html`. Use the Samba, File editor or Studio
-   Code Server add-on, or `scp`. If `www` did not exist before, restart Home Assistant once.
-2. Open `http://<your-home-assistant>:8123/local/habitat/index.html`.
+Habitat is one file, `dist/habitat.html`, that goes into the `www` folder of your Home Assistant
+configuration. Pick one of these:
 
-To try it without Home Assistant, open `index.html?demo`. It runs on a simulated home with live
-changing data. Opening `index.html` straight from disk also works for the demo.
+**One command (easiest).** Install the *Terminal & SSH* add-on (*Settings → Add-ons → Add-on store*),
+open it, and paste:
+
+```bash
+mkdir -p /config/www && wget -O /config/www/habitat.html https://raw.githubusercontent.com/HMueller6/android-home-assistant/ccr-e44b8c0e-a6gwjl/dashboard/dist/habitat.html
+```
+
+Run the same command again later to update.
+
+**Upload the file.** In the *File editor* add-on, open the folder browser, create a folder `www` if
+there is none, open it, and use the upload button to add `habitat.html`.
+
+**Copy the folder.** To edit the sources, copy this `dashboard` folder to `/config/www/habitat`
+instead, and use `/local/habitat/index.html` wherever this guide says `/local/habitat.html`.
+
+If the `www` folder is new, restart Home Assistant once. Then open
+`http://<your-home-assistant>:8123/local/habitat.html`.
+
+To try it without Home Assistant, open `habitat.html?demo` (or `index.html?demo`). It runs on a
+simulated home with live changing data, also straight from disk.
 
 ## Android
 
 **In the Home Assistant companion app (recommended).** In Home Assistant go to *Settings → Dashboards
-→ Add dashboard → Webpage* and enter `/local/habitat/index.html`. Habitat now appears in the sidebar on
+→ Add dashboard → Webpage* and enter `/local/habitat.html`. Habitat now appears in the sidebar on
 every device. Inside Home Assistant it reuses the app's own session, so there is nothing to log in to.
 To open the app straight into Habitat on one device, go to *Profile → Dashboard* there and pick Habitat.
 
-**On a wall tablet.** Open the `/local/habitat/index.html` address in Chrome or a kiosk browser such as
+**On a wall tablet.** Open the `/local/habitat.html` address in Chrome or a kiosk browser such as
 Fully Kiosk Browser, and sign in once. In Chrome, *Add to Home screen* gives it its own icon.
 *Keep the screen on* (the eye button) works over HTTPS. Over plain HTTP, use the kiosk browser's own
 screen-on setting.
@@ -61,14 +77,14 @@ launcher in `linux/`:
 
 ```bash
 # Menu entry with a "full screen" action, for the current user (no root):
-./linux/install.sh http://homeassistant.local:8123/local/habitat/index.html
+./linux/install.sh http://homeassistant.local:8123/local/habitat.html
 
 # Same, and start full screen at every login (wall display):
-./linux/install.sh http://homeassistant.local:8123/local/habitat/index.html --autostart
+./linux/install.sh http://homeassistant.local:8123/local/habitat.html --autostart
 
 # Or run it directly:
-./linux/habitat-kiosk.sh http://homeassistant.local:8123/local/habitat/index.html            # kiosk
-./linux/habitat-kiosk.sh --window http://homeassistant.local:8123/local/habitat/index.html   # window
+./linux/habitat-kiosk.sh http://homeassistant.local:8123/local/habitat.html            # kiosk
+./linux/habitat-kiosk.sh --window http://homeassistant.local:8123/local/habitat.html   # window
 ```
 
 The launcher uses Chromium, Chrome, Brave or Edge in app mode with its own profile, so the sign-in
@@ -97,7 +113,8 @@ Home Assistant's `http: cors_allowed_origins`. Option 4 works without it.
 ## Configuration
 
 Habitat needs no configuration. To change shared defaults for every screen, copy
-`habitat.config.example.json` to `habitat.config.json` next to `index.html` and edit it:
+`habitat.config.example.json` to `habitat.config.json` in the same folder as the dashboard file and edit
+it:
 
 | Key | Meaning |
 |---|---|
@@ -117,8 +134,9 @@ unavailable devices. These are saved per screen.
 
 ## Updating
 
-Copy the folder again. If a browser keeps the old version, reload it once. The files are versioned
-with a `?v=` suffix in `index.html`.
+Fetch or upload `habitat.html` again (or copy the folder again). If a browser keeps the old version,
+reload it once. After changing a source file, rebuild the single file with
+`python3 dashboard/tools/build_single_file.py`.
 
 ## Requirements
 
@@ -144,6 +162,8 @@ js/detail.js                detail view with history, controls and attributes
 js/app.js                   boot, state stream, rendering, header, settings, actions
 linux/                      kiosk launcher and desktop installer
 habitat.config.example.json optional shared settings
+tools/build_single_file.py  builds dist/habitat.html from the files above
+dist/habitat.html           the whole dashboard in one file, for installing
 ```
 
 Habitat is separate from the Android app in this repository. It has no Gradle module and does not change
